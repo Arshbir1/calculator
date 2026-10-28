@@ -77,6 +77,7 @@ pipeline {
                             echo "Deployment health check passed."
                             exit 0
                         fi
+
                         echo "Waiting for the application (attempt $attempt/30)..."
                         sleep 5
                     done
@@ -86,6 +87,32 @@ pipeline {
                     exit 1
                 '''
             }
+        }
+    }
+
+    post {
+        success {
+            emailext(
+                to: 'YOUR_GMAIL_ADDRESS',
+                subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """Build succeeded.
+
+Job: ${env.JOB_NAME}
+Build: #${env.BUILD_NUMBER}
+URL: ${env.BUILD_URL}"""
+            )
+        }
+
+        failure {
+            emailext(
+                to: 'YOUR_GMAIL_ADDRESS',
+                subject: "FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """Build failed. Please check the console output.
+
+Job: ${env.JOB_NAME}
+Build: #${env.BUILD_NUMBER}
+URL: ${env.BUILD_URL}"""
+            )
         }
     }
 }
