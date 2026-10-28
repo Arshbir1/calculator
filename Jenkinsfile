@@ -58,6 +58,35 @@ pipeline {
                 }
             }
         }
+
+        stage('Deploy') {
+            steps {
+                sh '''
+                    set -eu
+
+                    export CALCULATOR_IMAGE="${DOCKER_IMAGE}:${BUILD_NUMBER}"
+
+                    docker pull "$CALCULATOR_IMAGE"
+
+                    docker-compose -p calculator up -d \
+                        --no-build --force-recreate
+
+                    for attempt in $(seq 1 30); do
+                        if curl -fsS \
+                            http://localhost:8083/actuator/health; then
+                            echo "Deployment health check passed."
+                            exit 0
+                        fi
+                        echo "Waiting for the application (attempt $attempt/30)..."
+                        sleep 5
+                    done
+
+                    echo "Deployment health check failed."
+                    docker-compose -p calculator ps
+                    exit 1
+                '''
+            }
+        }
     }
 }
 
