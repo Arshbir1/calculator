@@ -93,6 +93,7 @@ pipeline {
     post {
         success {
             emailext(
+		to: env.JENKINS_EMAIL_TO,
                 subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: """Build succeeded.
 
@@ -104,6 +105,7 @@ URL: ${env.BUILD_URL}"""
 
         failure {
             emailext(
+		to: env.JENKINS_EMAIL_TO,
                 subject: "FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: """Build failed. Please check the console output.
 
