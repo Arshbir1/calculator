@@ -93,7 +93,6 @@ pipeline {
     post {
         success {
             emailext(
-                to: 'YOUR_GMAIL_ADDRESS',
                 subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: """Build succeeded.
 
@@ -105,7 +104,6 @@ URL: ${env.BUILD_URL}"""
 
         failure {
             emailext(
-                to: 'YOUR_GMAIL_ADDRESS',
                 subject: "FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: """Build failed. Please check the console output.
 
